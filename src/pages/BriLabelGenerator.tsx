@@ -22,7 +22,7 @@ import {
   X,
 } from 'lucide-react';
 
-import BriLogo from '../assets/BRI.svg';
+import BriLogo from '../assets/BRI.png';
 import BriForm from '../components/bri/BriForm';
 import BriPaste from '../components/bri/BriPaste';
 import BriCsvUpload from '../components/bri/BriCsvUpload';

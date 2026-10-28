@@ -22,7 +22,7 @@ import {
   X,
 } from 'lucide-react';
 
-import PegadaianLogo from '../assets/Pegadaian.svg';
+import PegadaianLogo from '../assets/Pegadaian.png';
 import PegadaianForm from '../components/pegadaian/PegadaianForm';
 import PegadaianPaste from '../components/pegadaian/PegadaianPaste';
 import PegadaianCsvUpload, {
@@ -405,38 +405,44 @@ export default function PegadaianLabelGenerator({
 
   return (
     <main className="min-h-screen bg-[#f8f9fb] text-slate-900">
-      {/* HEADER */}
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-14 w-32 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-white">
-              <img
-                src={PegadaianLogo}
-                alt="Logo Pegadaian"
-                className="h-full w-full scale-[1.45] object-contain"
-              />
-            </div>
+      
+{/* HEADER */}
+<header className="border-b border-slate-200 bg-white">
+  <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+    <div className="flex min-w-0 items-center gap-3">
+      {/* LOGO PEGADAIAN */}
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white">
+        <img
+          src={PegadaianLogo}
+          alt="Logo Pegadaian"
+          className="h-full w-full object-contain"
+        />
+      </div>
 
-            <div className="min-w-0 border-l border-slate-200 pl-3">
-              <h1 className="text-sm font-semibold tracking-tight sm:text-base">
-                Pegadaian Label Generator
-              </h1>
-              <p className="mt-0.5 text-[11px] text-slate-500">
-                SD-WAN Label Management
-              </p>
-            </div>
-          </div>
+      {/* JUDUL HALAMAN */}
+      <div className="min-w-0 border-l border-slate-200 pl-3">
+        <h1 className="text-sm font-semibold tracking-tight text-slate-900 sm:text-base">
+          Pegadaian Label Generator
+        </h1>
 
-          <button
-            type="button"
-            onClick={onBack}
-            className="ml-auto inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
-          >
-            <ArrowLeft size={13} />
-            Kembali
-          </button>
-        </div>
-      </header>
+        <p className="mt-0.5 text-[11px] text-slate-500">
+          SD-WAN Label Management
+        </p>
+      </div>
+    </div>
+
+    {/* TOMBOL KEMBALI */}
+    <button
+      type="button"
+      onClick={onBack}
+      className="ml-auto inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50"
+    >
+      <ArrowLeft size={13} />
+      Kembali
+    </button>
+  </div>
+</header>
+
 
       <div className="mx-auto max-w-6xl space-y-4 px-4 py-5 sm:px-6">
         {/* TITLE */}

@@ -1,13 +1,10 @@
 
 import { useState } from 'react';
-import {
-  Building2,
-  Landmark,
-  Store,
-  type LucideIcon,
-} from 'lucide-react';
 
 import Logo from './assets/Logo.png';
+import AlfaLogo from './assets/Alfa.svg';
+import BriLogo from './assets/BRI.png';
+import PegadaianLogo from './assets/Pegadaian.png';
 
 import LabelGenerator from './pages/LabelGenerator';
 import BriLabelGenerator from './pages/BriLabelGenerator';
@@ -21,24 +18,24 @@ type Page = 'alfamart' | 'bri' | 'pegadaian';
 interface NavigationItem {
   id: Page;
   label: string;
-  icon: LucideIcon;
+  logo: string;
 }
 
 const navigation: NavigationItem[] = [
   {
     id: 'alfamart',
     label: 'Alfamart',
-    icon: Store,
+    logo: AlfaLogo,
   },
   {
     id: 'bri',
     label: 'BRI',
-    icon: Landmark,
+    logo: BriLogo,
   },
   {
     id: 'pegadaian',
     label: 'Pegadaian',
-    icon: Building2,
+    logo: PegadaianLogo,
   },
 ];
 
@@ -51,37 +48,35 @@ export default function App() {
 
   const isPrinting = printStores !== null;
 
-  // Buka halaman Print Alfamart
   const handlePrint = (stores: StoreData[]) => {
     setPrintStores([...stores]);
   };
 
-  // Kembali dari halaman Print
   const handleBackFromPrint = () => {
     setPrintStores(null);
     setActivePage('alfamart');
   };
 
-  // Navigasi antar halaman
   const handleNavigate = (page: Page) => {
     if (isPrinting) return;
 
     setActivePage(page);
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   };
 
   return (
     <div className="min-h-screen bg-[#f8f9fb]">
-      {/* =====================================
-          NAVBAR UTAMA
-      ===================================== */}
-
+      {/* NAVBAR UTAMA */}
       {!isPrinting && (
         <header className="sticky top-0 z-30 border-b border-slate-200 bg-white">
-          <div className="mx-auto flex min-h-[64px] max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-
-            {/* BRAND / LOGO */}
-            <div className="flex min-w-0 shrink-0 items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-white">
+          <div className="mx-auto flex min-h-[68px] max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+            {/* LOGO UTAMA */}
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white">
                 <img
                   src={Logo}
                   alt="Logo SD-WAN Label Generator"
@@ -89,12 +84,12 @@ export default function App() {
                 />
               </div>
 
-              <div className="hidden min-w-0 sm:block">
-                <h1 className="text-[13px] font-semibold leading-tight tracking-tight text-slate-900">
+              <div className="min-w-0 border-l border-slate-200 pl-3">
+                <h1 className="truncate text-[13px] font-semibold tracking-tight text-slate-900 sm:text-sm">
                   SD-WAN Label Generator
                 </h1>
 
-                <p className="mt-0.5 text-[11px] text-slate-500">
+                <p className="mt-0.5 truncate text-[11px] text-slate-500">
                   Label Management System
                 </p>
               </div>
@@ -103,10 +98,9 @@ export default function App() {
             {/* NAVIGASI DESKTOP */}
             <nav
               aria-label="Navigasi generator"
-              className="hidden items-center gap-1 md:flex"
+              className="hidden items-center gap-1.5 md:flex"
             >
               {navigation.map((item) => {
-                const Icon = item.icon;
                 const isActive = activePage === item.id;
 
                 return (
@@ -114,25 +108,27 @@ export default function App() {
                     key={item.id}
                     type="button"
                     onClick={() => handleNavigate(item.id)}
-                    aria-current={
-                      isActive ? 'page' : undefined
-                    }
+                    aria-current={isActive ? 'page' : undefined}
                     className={[
-                      'relative inline-flex h-9 items-center justify-center gap-2',
-                      'rounded-lg px-3.5 text-[13px] font-medium',
-                      'transition-colors duration-150',
+                      'relative inline-flex h-11 items-center justify-center gap-2.5',
+                      'rounded-lg border px-3.5 text-[13px] font-medium',
+                      'transition-colors duration-200',
                       'focus-visible:outline-none focus-visible:ring-2',
-                      'focus-visible:ring-red-500 focus-visible:ring-offset-2',
+                      'focus-visible:ring-slate-400 focus-visible:ring-offset-2',
                       isActive
-                        ? 'bg-red-50 text-red-700'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+                        ? 'border-slate-200 bg-slate-50 text-slate-900'
+                        : 'border-transparent text-slate-500 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-900',
                     ].join(' ')}
                   >
-                    <Icon
-                      size={16}
-                      strokeWidth={1.8}
-                      aria-hidden="true"
-                    />
+                    {/* LOGO UKURAN SAMA */}
+                    <span className="flex h-8 w-12 shrink-0 items-center justify-center overflow-hidden">
+                      <img
+                        src={item.logo}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-full w-full object-contain"
+                      />
+                    </span>
 
                     <span>{item.label}</span>
 
@@ -149,11 +145,10 @@ export default function App() {
 
             {/* NAVIGASI TABLET */}
             <nav
-              aria-label="Navigasi generator"
+              aria-label="Navigasi generator tablet"
               className="hidden items-center gap-1 sm:flex md:hidden"
             >
               {navigation.map((item) => {
-                const Icon = item.icon;
                 const isActive = activePage === item.id;
 
                 return (
@@ -161,19 +156,25 @@ export default function App() {
                     key={item.id}
                     type="button"
                     onClick={() => handleNavigate(item.id)}
-                    aria-current={
-                      isActive ? 'page' : undefined
-                    }
+                    aria-current={isActive ? 'page' : undefined}
                     className={[
-                      'inline-flex h-9 items-center gap-1.5 rounded-lg px-2.5',
+                      'inline-flex h-10 items-center gap-1.5 rounded-lg border px-2',
                       'text-xs font-medium transition-colors',
                       isActive
-                        ? 'bg-red-50 text-red-700'
-                        : 'text-slate-600 hover:bg-slate-100',
+                        ? 'border-slate-200 bg-slate-50 text-slate-900'
+                        : 'border-transparent text-slate-500 hover:bg-slate-50',
                     ].join(' ')}
                   >
-                    <Icon size={15} aria-hidden="true" />
-                    {item.label}
+                    <span className="flex h-8 w-12 shrink-0 items-center justify-center overflow-hidden">
+                      <img
+                        src={item.logo}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-full w-full object-contain"
+                      />
+                    </span>
+
+                    <span>{item.label}</span>
                   </button>
                 );
               })}
@@ -185,9 +186,8 @@ export default function App() {
             aria-label="Navigasi generator mobile"
             className="border-t border-slate-100 px-3 py-2 sm:hidden"
           >
-            <div className="grid grid-cols-3 gap-1.5">
+            <div className="grid grid-cols-3 gap-2">
               {navigation.map((item) => {
-                const Icon = item.icon;
                 const isActive = activePage === item.id;
 
                 return (
@@ -195,30 +195,37 @@ export default function App() {
                     key={item.id}
                     type="button"
                     onClick={() => handleNavigate(item.id)}
-                    aria-current={
-                      isActive ? 'page' : undefined
-                    }
+                    aria-current={isActive ? 'page' : undefined}
                     className={[
-                      'flex min-h-11 min-w-0 items-center justify-center gap-1.5',
-                      'rounded-lg px-2 text-[11px] font-medium',
-                      'transition-colors duration-150',
-                      'focus-visible:outline-none focus-visible:ring-2',
-                      'focus-visible:ring-red-500',
+                      'relative flex min-h-[70px] min-w-0 flex-col items-center justify-center gap-1',
+                      'rounded-lg border px-2 py-2',
+                      'transition-colors duration-200',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400',
                       isActive
-                        ? 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-200'
-                        : 'text-slate-600 hover:bg-slate-100',
+                        ? 'border-slate-300 bg-slate-50 text-slate-900'
+                        : 'border-slate-100 bg-white text-slate-500 hover:bg-slate-50',
                     ].join(' ')}
                   >
-                    <Icon
-                      size={15}
-                      strokeWidth={1.8}
-                      className="shrink-0"
-                      aria-hidden="true"
-                    />
+                    {/* LOGO MOBILE UKURAN SAMA */}
+                    <div className="flex h-9 w-14 items-center justify-center overflow-hidden">
+                      <img
+                        src={item.logo}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
 
-                    <span className="truncate">
+                    <span className="max-w-full truncate text-[11px] font-medium">
                       {item.label}
                     </span>
+
+                    {isActive && (
+                      <span
+                        aria-hidden="true"
+                        className="absolute bottom-0 left-4 right-4 h-[2px] rounded-full bg-red-600"
+                      />
+                    )}
                   </button>
                 );
               })}
@@ -227,10 +234,7 @@ export default function App() {
         </header>
       )}
 
-      {/* =====================================
-          HALAMAN ALFAMART
-      ===================================== */}
-
+      {/* HALAMAN ALFAMART */}
       <div
         style={{
           display:
@@ -242,10 +246,7 @@ export default function App() {
         <LabelGenerator onPrint={handlePrint} />
       </div>
 
-      {/* =====================================
-          HALAMAN BRI
-      ===================================== */}
-
+      {/* HALAMAN BRI */}
       <div
         style={{
           display:
@@ -259,10 +260,7 @@ export default function App() {
         />
       </div>
 
-      {/* =====================================
-          HALAMAN PEGADAIAN
-      ===================================== */}
-
+      {/* HALAMAN PEGADAIAN */}
       <div
         style={{
           display:
@@ -276,10 +274,7 @@ export default function App() {
         />
       </div>
 
-      {/* =====================================
-          HALAMAN PRINT ALFAMART
-      ===================================== */}
-
+      {/* HALAMAN PRINT ALFAMART */}
       {printStores !== null && (
         <PrintLabel
           stores={printStores}
