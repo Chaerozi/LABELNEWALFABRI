@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="100%" height="100%">
+  <defs>
+    <style>
+      .blue-text {
+        font-family: 'Arial Rounded MT Bold', 'Fredoka', 'Quicksand', 'Trebuchet MS', sans-serif;
+        font-size: 110px;
+        font-weight: 900;
+        fill: #0056a6;
+      }
+      .red-text {
+        font-family: 'Arial Rounded MT Bold', 'Fredoka', 'Quicksand', 'Trebuchet MS', sans-serif;
+        font-size: 110px;
+        font-weight: 900;
+        font-style: italic;
+        fill: #e31e24;
+      }
+    </style>
+  </defs>
+
+  <!-- Background Putih -->
+  <rect width="100%" height="100%" fill="#ffffff" />
+
+  <g transform="translate(30, 20)">
+    <!-- Teks Alfa (Biru) -->
+    <text x="30" y="150" class="blue-text">Alfa</text>
+    
+    <!-- Teks mart (Merah Miring) -->
+    <text x="260" y="150" class="red-text">mart</text>
+
+    <!-- Garis Merah Utama -->
+    <path d="M 35 175 
+             L 520 175 
+             Q 535 175 530 195 
+             L 515 205 
+             Q 510 210 495 210 
+             L 45 210 
+             Q 30 210 30 192.5 
+             Q 30 175 35 175 Z" fill="#e31e24" />
+
+    <!-- Garis Kuning Lengkung Bawah -->
+    <path d="M 30 215 
+             L 500 215 
+             Q 525 215 535 200 
+             Q 533 225 500 225 
+             L 45 225 
+             Q 30 225 30 215 Z" fill="#ffcd00" />
+  </g>
+</svg>
