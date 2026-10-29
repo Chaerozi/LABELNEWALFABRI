@@ -41,17 +41,52 @@ const toTwips = (mm: number): number =>
 const toPixels = (mm: number): number =>
   Math.round((mm * 96) / 25.4);
 
-// Ukuran gambar tetap proporsional 2:1.
-// Sedikit lebih kecil dari bidang stiker
-// untuk menghindari pemotongan oleh Word.
+// ==========================================
+// PENGATURAN LABEL
+// ==========================================
+
+// Ukuran gambar label.
+// Tidak diubah agar desain tetap sama.
 const IMAGE_W = 62;
 const IMAGE_H = 31;
 
+// ==========================================
+// KALIBRASI CETAK WORD
+// ==========================================
+
+// Baris pertama sudah sesuai, jadi START_Y
+// tetap mengikuti pegadaianCanvas.ts.
+//
+// Masalah: baris 2, 3, dan 4 semakin naik.
+//
+// Tambahkan jarak antarbaris sebesar 0.5 mm.
+// Ini merupakan nilai awal kalibrasi.
+//
+// Jika masih naik, coba 0.7 atau 1.0.
+// Jika terlalu turun, coba 0.3 atau 0.2.
+
+const ROW_OFFSET_MM = 0.5;
+
+// Jarak antarbaris setelah kalibrasi.
+const CALIBRATED_GAP_Y = GAP_Y + ROW_OFFSET_MM;
+
+// ==========================================
+// BORDER
+// ==========================================
+
 const noBorders = {
-  top: { style: BorderStyle.NONE },
-  bottom: { style: BorderStyle.NONE },
-  left: { style: BorderStyle.NONE },
-  right: { style: BorderStyle.NONE },
+  top: {
+    style: BorderStyle.NONE,
+  },
+  bottom: {
+    style: BorderStyle.NONE,
+  },
+  left: {
+    style: BorderStyle.NONE,
+  },
+  right: {
+    style: BorderStyle.NONE,
+  },
 };
 
 // ==========================================
@@ -88,15 +123,18 @@ function makeCell(
   const paragraph = imageData
     ? new Paragraph({
         alignment: AlignmentType.CENTER,
+
         spacing: {
           before: 0,
           after: 0,
           line: 240,
         },
+
         children: [
           new ImageRun({
             type: 'png',
             data: imageData,
+
             transformation: {
               width: toPixels(IMAGE_W),
               height: toPixels(IMAGE_H),
@@ -110,6 +148,7 @@ function makeCell(
           after: 0,
           line: 1,
         },
+
         children: [],
       });
 
@@ -118,15 +157,79 @@ function makeCell(
       size: toTwips(widthMm),
       type: WidthType.DXA,
     },
+
     borders: noBorders,
+
     margins: {
       top: 0,
       bottom: 0,
       left: 0,
       right: 0,
     },
+
     verticalAlign: VerticalAlign.CENTER,
+
     children: [paragraph],
+  });
+}
+
+// ==========================================
+// MEMBUAT BARIS LABEL
+// ==========================================
+
+function createLabelRow(
+  row: number,
+  images: Array<Uint8Array | undefined>
+): TableRow {
+  const cells: TableCell[] = [];
+
+  for (let col = 0; col < 3; col++) {
+    // Urutan pengisian vertikal per kolom.
+    const index = col * ROWS + row;
+
+    cells.push(
+      makeCell(LABEL_W, images[index])
+    );
+
+    if (col < 2) {
+      cells.push(
+        makeCell(GAP_X)
+      );
+    }
+  }
+
+  return new TableRow({
+    cantSplit: true,
+
+    height: {
+      value: toTwips(LABEL_H),
+      rule: HeightRule.EXACT,
+    },
+
+    children: cells,
+  });
+}
+
+// ==========================================
+// MEMBUAT BARIS JARAK
+// ==========================================
+
+function createSpacingRow(): TableRow {
+  return new TableRow({
+    cantSplit: true,
+
+    height: {
+      value: toTwips(CALIBRATED_GAP_Y),
+      rule: HeightRule.EXACT,
+    },
+
+    children: [
+      makeCell(LABEL_W),
+      makeCell(GAP_X),
+      makeCell(LABEL_W),
+      makeCell(GAP_X),
+      makeCell(LABEL_W),
+    ],
   });
 }
 
@@ -140,61 +243,30 @@ function createTable(
   const rows: TableRow[] = [];
 
   for (let row = 0; row < ROWS; row++) {
-    const cells: TableCell[] = [];
-
-    for (let col = 0; col < 3; col++) {
-      // Pengisian vertikal per kolom
-      const index = col * ROWS + row;
-
-      cells.push(
-        makeCell(LABEL_W, images[index])
-      );
-
-      if (col < 2) {
-        cells.push(makeCell(GAP_X));
-      }
-    }
-
+    // Baris label.
     rows.push(
-      new TableRow({
-        cantSplit: true,
-        height: {
-          value: toTwips(LABEL_H),
-          rule: HeightRule.EXACT,
-        },
-        children: cells,
-      })
+      createLabelRow(row, images)
     );
 
-    // Jarak antarbaris stiker
+    // Tambahkan jarak hanya setelah baris label.
+    // Tidak menambah jarak sebelum baris pertama.
     if (row < ROWS - 1) {
       rows.push(
-        new TableRow({
-          cantSplit: true,
-          height: {
-            value: toTwips(GAP_Y),
-            rule: HeightRule.EXACT,
-          },
-          children: [
-            makeCell(LABEL_W),
-            makeCell(GAP_X),
-            makeCell(LABEL_W),
-            makeCell(GAP_X),
-            makeCell(LABEL_W),
-          ],
-        })
+        createSpacingRow()
       );
     }
   }
 
   return new Table({
     layout: TableLayoutType.FIXED,
+
     width: {
       size: toTwips(
         LABEL_W * 3 + GAP_X * 2
       ),
       type: WidthType.DXA,
     },
+
     columnWidths: [
       toTwips(LABEL_W),
       toTwips(GAP_X),
@@ -202,7 +274,9 @@ function createTable(
       toTwips(GAP_X),
       toTwips(LABEL_W),
     ],
+
     borders: noBorders,
+
     rows,
   });
 }
@@ -236,6 +310,7 @@ export async function generatePegadaianWord(
       Uint8Array | undefined
     > = [];
 
+    // Render seluruh label menjadi PNG.
     for (const item of pageItems) {
       const dataUrl =
         await renderPegadaianLabel(item);
@@ -252,16 +327,23 @@ export async function generatePegadaianWord(
             width: toTwips(PAPER_W),
             height: toTwips(PAPER_H),
           },
+
           margin: {
+            // Posisi baris pertama tetap.
             top: toTwips(START_Y),
+
             bottom: toTwips(4),
+
             left: toTwips(START_X),
+
             right: toTwips(4),
+
             header: 0,
             footer: 0,
           },
         },
       },
+
       children: [
         createTable(images),
       ],
